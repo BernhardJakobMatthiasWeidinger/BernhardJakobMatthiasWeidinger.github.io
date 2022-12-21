@@ -1,6 +1,29 @@
 <html>
-    <head> </head>
+    <head> 
+        <title> BernhardJakobMatthiasWeidinger </title>
+        <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+        <script> 
+
+            function viewGoerliBlockHeight() {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                document.getElementById("demo").innerHTML = "viewGoerliBlockHeight";
+            }
+            function balanceOfBrliContract() {
+                document.getElementById("demo").innerHTML = "balanceOfBrliContract";
+            }
+            function transferBrliToTeacher() {
+                document.getElementById("demo").innerHTML = "transferBrliToTeacher";
+            }
+        </script>
+    </head>
     <body>
-        <h1> Hello World </h1>
+        <h1 id="demo"> Hello World </h1>
+        <button onclick="viewGoerliBlockHeight()"> View current Goerli Block Height </button>
+        <br>
+        <button onclick="balanceOfBrliContract()"> Display Brli Balance </button>
+        <b> Address Hash: </b>
+        <input type="text" >
+        <br>
+        <button onclick="transferBrliToTeacher()"> Transfer to Teacher </button>
     </body>
 </html>
