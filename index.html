@@ -3,27 +3,72 @@
         <title> BernhardJakobMatthiasWeidinger </title>
         <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
         <script> 
+            function getContract(signerOrProvider) {
+                const contractAddress = "0x53717024005D24BeD37829a2443bF072b17d8A62";
+                const abi = [
+                    "event Transfer(address indexed from, address indexed to, uint256 value)",
+                    "event Approval(address indexed owner, address indexed spender, uint256 value)",
 
-            function viewGoerliBlockHeight() {
+                    "function totalSupply() external view returns(uint256)",
+                    "function balanceOf(address account) external view returns(uint256)",
+                    "function transfer(address to, uint256 amount) external returns(bool)",
+                    "function allowance(address owner, address spender) external view returns(uint256)",
+                    "function approve(address spender, uint256 amount) external returns(bool)",
+                    "function transferFrom(address from, address to, uint256 amount) external returns(bool)"
+                ];
+                let contract = new ethers.Contract(contractAddress, abi, signerOrProvider);
+
+                return contract;
+            }
+            async function viewGoerliBlockHeight() {
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
-                document.getElementById("demo").innerHTML = "viewGoerliBlockHeight";
+                const network = await provider.getNetwork();
+                const blockNumber = await provider.getBlockNumber();
+
+                document.getElementById("lab").innerHTML = "Current " + network.name + " block height: ";
+                document.getElementById("res").innerHTML = blockNumber;
             }
-            function balanceOfBrliContract() {
-                document.getElementById("demo").innerHTML = "balanceOfBrliContract";
+
+            async function balanceOfBrliContract() {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const accounts = await provider.send("eth_requestAccounts", []);
+                const signer = provider.getSigner();
+                const address = await signer.getAddress();
+                const contract = getContract(provider);
+
+                const currentBalance = await contract.balanceOf(address);
+
+                document.getElementById("lab").innerHTML = "Current BTH balance: ";
+                document.getElementById("res").innerHTML = ethers.utils.formatUnits(currentBalance, 2);
             }
-            function transferBrliToTeacher() {
-                document.getElementById("demo").innerHTML = "transferBrliToTeacher";
+
+            async function transferToAccount() {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const accounts = await provider.send("eth_requestAccounts", []);
+                const signer = provider.getSigner();
+                const contract = getContract(signer);
+
+                try {
+                    await contract.transfer("0x15433DA387451F9dE4565280C85506CB71aF9376", 1000);
+                    document.getElementById("lab").innerHTML = "";
+                    document.getElementById("res").innerHTML = "Successfully transfered 10 BTH to 0x15433DA387451F9dE4565280C85506CB71aF9376";
+                } catch (error) {
+                    console.error(error);
+                }
             }
         </script>
     </head>
     <body>
-        <h1 id="demo"> Hello World </h1>
+        <label id="lab"> </label> 
+        <b id="res"> </b>
+        <br><br>
+
         <button onclick="viewGoerliBlockHeight()"> View current Goerli Block Height </button>
         <br>
+        
         <button onclick="balanceOfBrliContract()"> Display Brli Balance </button>
-        <b> Address Hash: </b>
-        <input type="text" >
         <br>
-        <button onclick="transferBrliToTeacher()"> Transfer to Teacher </button>
+
+        <button onclick="transferToAccount()"> Transfer to 0x15433DA387451F9dE4565280C85506CB71aF9376 </button>
     </body>
 </html>
